@@ -239,6 +239,11 @@ impl List {
     /// Pull the list from the official URL
     #[cfg(feature = "remote_list")]
     pub fn fetch() -> Result<List> {
+        if let Ok(path) = std::env::var("PUBLIC_SUFFIX_LIST_PATH") {
+            let list = std::fs::read_to_string(&path).expect(&format!("Failed to read file at {}", path));
+            return Self::from_str(&list);
+        }
+
         let github = "https://raw.githubusercontent.com/publicsuffix/list/master/public_suffix_list.dat";
 
         Self::from_url(LIST_URL)
